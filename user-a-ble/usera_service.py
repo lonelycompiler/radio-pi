@@ -1,5 +1,5 @@
 from pybleno import *
-from usera_charateristic import UserA_Characteristic
+from usera_characteristic import UserA_Characteristic
 import uuid_common
 
 class UserAService(BlenoPrimaryService):

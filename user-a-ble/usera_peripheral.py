@@ -1,6 +1,6 @@
 #!/bin/python3
 from pybleno import *
-from NewsCharacteristic import *
+from usera_characteristic import *
 from usera_service import *
 import sys
 import os
