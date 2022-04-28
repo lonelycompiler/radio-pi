@@ -5,9 +5,9 @@ import sys
 sys.path.append('..')
 import uuid_common
 
-CHARACTERISTIC_NAME = "UserA"
+CHARACTERISTIC_NAME = "UserB"
 
-class UserA_Characteristic(Characteristic):
+class UserB_Characteristic(Characteristic):
     def __init__(self):
         Characteristic.__init__(self, {
             'uuid': uuid_common.User_Characteristic,
@@ -43,10 +43,10 @@ class UserA_Characteristic(Characteristic):
             callback(Characteristic.RESULT_INVALID_ATTRIBUTE_LENGTH)
         else:
             new_message = data.decode("utf-8")
-            add_message("UserA", new_message)
+            add_message("UserB", new_message)
 
             if self._updateValueCallback:
-                print('UserA_Characteristic - onWriteRequest: notifying');
+                print('UserB_Characteristic - onWriteRequest: notifying');
                 self._updateValueCallback(bytes(get_most_recent_msgs(), 'utf-8'))
             
             callback(Characteristic.RESULT_SUCCESS)
@@ -76,6 +76,7 @@ def get_most_recent_msgs():
     print('get_most_recent_msgs()')
     connection = sqlite3.connect('/home/pi/radio-pi/messages.db')
     cursor = connection.cursor()
+    #cursor.execute('DROP TABLE messages;')
     #cursor.execute('CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY, author text NOT NULL, message text NOT NULL);')
     #cursor.execute(f'INSERT INTO messages (author, message) VALUES("test_author", "LAST ANOTHER TEST MESSAGE");')
     msg = ''

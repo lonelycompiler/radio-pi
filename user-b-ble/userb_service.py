@@ -1,15 +1,15 @@
 from pybleno import *
-from usera_characteristic import UserA_Characteristic
+from userb_characteristic import UserB_Characteristic
 import sys
 sys.path.append('..')
 import uuid_common
 
-class UserAService(BlenoPrimaryService):
+class UserBService(BlenoPrimaryService):
     def __init__(self):
         BlenoPrimaryService.__init__(self, {
-            'uuid': uuid_common.UserAService,
+            'uuid': uuid_common.UserBService,
             'characteristics': [
-                UserA_Characteristic()
+                UserB_Characteristic()
             ]
         })
         print("Started Bleno's Primary Service")

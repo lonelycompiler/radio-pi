@@ -1,19 +1,21 @@
 #!/bin/python3
 from pybleno import *
-from usera_characteristic import *
-from usera_service import *
+from userb_characteristic import *
+from userb_service import *
 import sys
+import os
+import time
 import os
 import sqlite3
 
 bleno = Bleno()
-userService = UserAService()
+userService = UserBService()
 
-os.environ["BLENO_DEVICE_NAME"] = "UserA"
+os.environ["BLENO_DEVICE_NAME"] = "UserB"
 
 def onStateChange(state):
     if state == 'poweredOn':
-        bleno.startAdvertising('radio_a',[userService.uuid], onAdvertisingStart)
+        bleno.startAdvertising('radio_b',[userService.uuid], onAdvertisingStart)
     else:
         bleno.stopAdvertising()
     pass
@@ -27,19 +29,20 @@ def onAdvertisingStart(error):
 bleno.on('advertisingStart', onAdvertisingStart)
 
 def onAccept(address):
+    time.sleep(2)
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, "../messages.db")
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    if (tuple(cursor.execute('SELECT address FROM users WHERE user="UserB"')))[0][0] == address:
-        print('disconnecting user A')
+    print(cursor.execute('SELECT * FROM users'))
+    if tuple(cursor.execute('SELECT address FROM users WHERE user="UserA"'))[0][0] == address:
+        print('disconnecting user B')
         bleno.disconnect()
-        bleno.connect(address)
     else:
-        print(tuple(cursor.execute('SELECT address FROM users WHERE user="UserB"'))[0][0])
-        cursor.execute('UPDATE users SET address=? WHERE user="UserA"', (address,))
+        print(tuple(cursor.execute('SELECT address FROM users WHERE user="UserA"'))[0][0])
+        cursor.execute('UPDATE users SET address=? WHERE user="UserB"', (address,))
         print(f'connected to {address}')
-    connection.commit()
+        connection.commit()
     connection.close()
 
 bleno.on('accept', onAccept)
@@ -58,13 +61,12 @@ try:
 finally:
     bleno.stopAdvertising()
     bleno.disconnect()
-    print ("UserA's BLE Daemon Terminated.")
+    print ("UserB's BLE Daemon Terminated.")
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, "../messages.db")
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    #cursor.execute('UPDATE users SET address=? WHERE user="UserA"', ("",))
-    print(cursor.execute('SELECT address FROM users WHERE user="UserA"'))
+    cursor.execute('UPDATE users SET address=? WHERE user="UserB"', ("",))
     connection.commit()
     connection.close()
     sys.exit(1)
